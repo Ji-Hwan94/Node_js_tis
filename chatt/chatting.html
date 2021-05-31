@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- jQuery Mobile CDN ---------------------------------->
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        
+    <!-- socket.io.js 사용 ------------------------------->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+        .msg{
+            margin-top: 5px;
+        }
+
+        .msg span{
+            display: inline-block;
+            border-radius: 5px;
+            padding: 5px;
+            line-height: 0.5px;
+            background-color: aqua;
+            text-shadow: none;
+        }
+
+        /* #content div:nth-child(2n){
+            text-align: right;
+        }
+        #content div::not(#content div:nth-child(2n)){
+            text-align: left;
+        } */
+
+        .left{
+            text-align: left;
+            background-color: bisque;
+        }
+    </style>
+    <script>
+        $(function(){
+            var socket = io.connect();
+
+            socket.on('message', function(data){
+                var output = "";
+                output += "<div class = 'msg'>";
+                output += "<span>";
+                output += "     <h3>"+data.name+"</h3>";
+                output += "     <p>"+data.message+"</p>";
+                output += "     <p>"+data.date+"</p>";
+                output += "</span>";
+                output += "</div>";
+
+                $(output).appendTo("#content");
+
+                $(document).scrollTop($(document).height());
+
+                // 발신 메세지는 오른쪽, 수신 메세지는 왼쪽으로 하는 코드다.
+                if(data.name == $("#name").val()){
+                    $("#content div:last-child").css("text-align", "right");
+                } else {
+                    $("#content div:last-child").css("text-align", "left");
+                }
+            });
+
+
+            $("button").click(function(){
+                socket.emit("message", {
+                    name : $("#name").val(),
+                    message : $("#message").val(),
+                    date : new Date().toLocaleTimeString()
+                });
+            });
+
+        });
+    </script>
+</head>
+<body>
+    <div data-role="page" id="page1">
+        <div data-role="header">
+            멀티 채팅
+        </div>
+        <div data-role="content">
+            <h1>이름</h1>
+            <input type="text" id="name">
+            <a data-role="button" href="#page2">시작</a>
+        </div>
+    </div>
+    <div data-role="page" id="page2">
+        <div data-role="header">
+            멀티 채팅
+        </div>
+        <div data-role="content">
+            <div id="content">
+            </div>
+            <input type="text" id="message">
+            <button>전송</button>
+        </div>
+    </div>
+</body>
+</html>
