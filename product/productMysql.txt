@@ -1,0 +1,24 @@
+create database company;
+
+-- mysql은 테이블을 생성하고 사용한다고 선언해주어야한다.
+use company;
+
+-- int = oracle에서의 number / auto_increment = oracle에서 sequence(11g) 
+create table products(
+	id int not null auto_increment primary key,
+	name varchar(50) not null,
+	modelnumber varchar(15) not null,
+	series varchar(30) not null
+);
+
+insert into products(name,modelnumber,series)
+values('Eric Clapton','0117602806','Artist');
+insert into products(name,modelnumber,series)
+values('Bts','0115346','Artist');
+insert into products(name,modelnumber,series)
+values('My Chermical Romance','76545806','Artist');
+insert into products(name,modelnumber,series)
+values('조용필','64548706','Artist');
+
+-- mysql은 자동 커밋이다.
+select * from products;

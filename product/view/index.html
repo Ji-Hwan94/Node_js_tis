@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DB Basic</title>
+    <script src="http://code.jquery.com/jquery-3.1.1.js"></script>
+    <script>
+        $(function(){
+            function selectData(){
+                $('#output').empty();
+
+                $.getJSON('/products', function(data){
+                    $(data).each(function(index, item){
+                        var output = '';
+                        output += '<tr>';
+                        output += '     <td>'+item.id+'</td>';
+                        output += '     <td>'+item.name+'</td>';
+                        output += '     <td>'+item.modelnumber+'</td>';
+                        output += '     <td>'+item.series+'</td>';
+                        output += '</tr>';
+                        $('#output').append(output);    
+                    });
+                });
+            }
+
+            // 선택한 열의 데이터를 input에 넣는다.
+            $('#output').delegate('td', 'click', function(){
+                var id = $(this).closest('tr').find('td:eq(0)').text();
+                var name = $(this).closest('tr').find('td:eq(1)').text();
+                var modelnumber = $(this).closest('tr').find('td:eq(2)').text();
+                var series = $(this).closest('tr').find('td:eq(3)').text();
+                
+                $('input[name=id]').attr('value', id);
+                $('input[name=name]').attr('value', name);
+                $('input[name=modelnumber]').attr('value', modelnumber);
+                $('input[name=series]').attr('value', series);
+            });
+
+            // 추가 버튼의 method
+            $('#insert_form').submit(function(event){
+                event.preventDefault();
+
+                var data = $(this).serialize();
+
+                $.post('/products', data, selectData);
+            });
+            selectData();
+
+            // serialize
+
+            $("#delete").click(function(){
+                $ajax({
+                    type:'delete',
+                    url: '/products/:id',
+                    dataType: 'text',
+                    succcess: function(data){
+                        $('#output').val(data)
+                    }
+                })
+            });
+
+
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <form id="insert_form">
+        <fieldset>
+            <legend>데이터 추가</legend>
+            <table>
+                <tr>
+                    <td><label>아이디</label></td>
+                    <td><input type="text" name="id" readonly></td>
+                </tr>
+                <tr>
+                    <td><label>상품명</label></td>
+                    <td><input type="text" name="name" /></td>
+                </tr>
+                <tr>
+                    <td><label>모델 번호</label></td>
+                    <td><input type="text" name="modelnumber" /></td>
+                </tr>
+                <tr>
+                    <td><label>시리즈</label></td>
+                    <td><input type="text" name="series" /></td>
+                </tr>
+            </table>
+            <input type="submit" value="추가" />
+            <input type="submit" value="수정" id="change" />
+            <input type="submit" value="삭제" id="delete" />
+        </fieldset>    
+    </form>
+    </div>
+    <table id="output" border="1">
+
+    </table>
+</body>
+</html>
