@@ -9,7 +9,7 @@ var client = mysql.createConnection({
 });
 
 var app = express();
-app.use(express.static('public'));
+app.use(express.static('product'));
 app.use(bodyParser.urlencoded({ extends: false }));
 
 app.get('/products', function(req, res){
@@ -60,7 +60,10 @@ app.put('/products/:id', function(req, res){
 app.delete('/products/:id', function(req, res){
     var id = Number(req.params.id);
 
-    client.query('DELETE FROM products WHERE id=', [
+    // 삭제되는 id의 값을 가져온다.
+    console.log(id);
+
+    client.query('DELETE FROM products WHERE id=?', [
         id
     ], function(error, data){
         res.send(data);
