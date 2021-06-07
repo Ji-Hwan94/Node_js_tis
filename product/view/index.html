@@ -48,7 +48,45 @@
             });
             selectData();
 
+            // 수정
+            $("#change").click(function(event){
+                event.preventDefault();
 
+                var id = $('input[name=id]').val();
+                // var name = $('input[name=name]').val();
+                // var modelnumber = $('input[name=modelnumber]').val();
+                // var series = $('input[name=series]').val();
+
+                var data = $('#insert_form').serialize();
+
+                $.ajax({
+                    url: '/products/'+id,
+                    type: 'put',
+                    data: data, 
+                    success: function(data){
+                         // 연결이 성공 되면 output을 다시 그린다.
+                         $.getJSON('/products', function(data){
+                        $('#output').empty();
+
+                        $(data).each(function(index, item){
+                            var output = '';
+                            output += '<tr>';
+                            output += '     <td>'+item.id+'</td>';
+                            output += '     <td>'+item.name+'</td>';
+                            output += '     <td>'+item.modelnumber+'</td>';
+                            output += '     <td>'+item.series+'</td>';
+                            output += '</tr>';
+                        $('#output').append(output);    
+                    });
+                });
+                    }
+                })
+
+            });
+
+
+
+            // 삭제 method
             $("#delete_on").click(function(event){
                 // 기존에 있던 event를 막아준다.
                 event.preventDefault();
